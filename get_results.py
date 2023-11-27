@@ -5,13 +5,15 @@ def get_last_draw(url, driver):
     return last_draw
 
 
-def get_draw_results(url, driver, draw):
+def get_draw_info(url, driver, draw):
     driver.get(f'{url}/{draw}')
     prize = driver.find_element("class name", "jackpot").text
     numbers = driver.find_elements("class name", "ball")
+    date = driver.find_element("xpath", "/html/body/div[2]/main/div/h1/span").text
+
     prize = prize.replace(".","")
     prize = prize.replace(",",".")
-    numbers_list = [int(element.text) for element in numbers]
-
     prize = prize.split(sep=" ")[-1]
-    return numbers_list, prize
+
+    numbers_list = [int(element.text) for element in numbers]
+    return numbers_list, prize, date

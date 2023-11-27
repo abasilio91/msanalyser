@@ -7,8 +7,6 @@ def main():
     driver = webdriver.Edge(options=options)
     url = "https://www.megasena.com"
 
-    numbers, prize = get_results.get_draw_results(f'{url}/resultados', driver, 2660)
-    
-
+    numbers, prize, date = get_results.get_draw_info(f'{url}/resultados', driver, 2660)
     driver.close()
 main()
