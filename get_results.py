@@ -1,14 +1,17 @@
-from selenium import webdriver
+def get_last_draw(url, driver):
+    driver.get(url)
+    last_draw = driver.find_element("class name", "draw-number").text
+    last_draw = last_draw.split(sep=" ")[-1]
+    return last_draw
 
-options = webdriver.EdgeOptions()
-options.add_argument("--headless=new")
-driver = webdriver.Edge(options=options)
 
-url = "https://www.megasena.com/"
+def get_draw_results(url, driver, draw):
+    driver.get(f'{url}/{draw}')
+    prize = driver.find_element("class name", "jackpot").text
+    numbers = driver.find_elements("class name", "ball")
+    prize = prize.replace(".","")
+    prize = prize.replace(",",".")
+    numbers_list = [int(element.text) for element in numbers]
 
-driver.get(url)
-last_result = driver.find_element("class name", "draw-number").text
-driver.close()
-
-last_result = last_result.split(sep=" ")[1]
-print(last_result)
+    prize = prize.split(sep=" ")[-1]
+    return numbers_list, prize
