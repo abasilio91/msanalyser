@@ -2,6 +2,13 @@ import csv
 import os
 from selenium import webdriver
 
+def set_driver():
+    options = webdriver.EdgeOptions()
+    options.add_argument("--headless=new")
+    driver = webdriver.Edge(options=options)
+    url="https://www.megasena.com"
+    return url, driver
+
 def get_last_draw(url, driver):
     driver.get(url)
     last_draw = driver.find_element("class name", "draw-number").text
@@ -21,22 +28,6 @@ def get_draw_info(url, driver, draw):
     numbers_list = [int(element.text) for element in numbers]
     return numbers_list, prize, date
 
-def create_csv_file_if_not_exists(file, header):
-    if not os.path.exists(file):
-        with open(file, "w+", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(header)
-
-def to_csv(info):
-    with open("resultados.csv", 'a', newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(info)
-
-def last_entry(csv_file):
-    with open(csv_file, 'r') as file:
-        last_line = file.readlines()[-1]
-    return int(last_line[0])
-
 def get_results(url, driver, start=1):
     header = ["concurso","dia","mes","ano","premio","numeros"]
     create_csv_file_if_not_exists('resultados.csv', header)
@@ -51,9 +42,26 @@ def update_results(url, driver, file='resultados.csv'):
     last_draw = last_entry(file)
     get_results(url, driver, last_draw)
 
-options = webdriver.EdgeOptions()
-options.add_argument("--headless=new")
-driver = webdriver.Edge(options=options)
-url="https://www.megasena.com/"
+def create_csv_file_if_not_exists(file, header):
+    if not os.path.exists(file):
+        with open(file, "w+", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(header)
 
-get_results(url, driver)
+def to_csv(info):
+    with open("resultados.csv", 'a', newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(info)
+
+def last_entry(csv_file):
+    with open(csv_file, 'r') as file:
+        last_line = file.readlines()[-1].split(sep=',')
+    return int(last_line[0])
+
+def str_to_list_of_int(str):
+    return [int(x) for x in str.replace("[","").replace("]","").replace('\n',"").split(sep=",")]
+
+# url, driver = set_driver()
+# ultimo_resultado = last_entry('resultados.csv')
+# update_results(url, driver, ultimo_resultado)
+# driver.close()
