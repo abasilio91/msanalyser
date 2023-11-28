@@ -29,16 +29,18 @@ def get_draw_info(url, driver, draw):
     return numbers_list, prize, date
 
 def get_results(url, driver, start=1):
-    header = ["concurso","dia","mes","ano","premio","numeros"]
-    create_csv_file_if_not_exists('resultados.csv', header)
+    header = ["concurso","dia","mes","ano","premio","num1","num2","num3","num4","num5","num6"]
+    create_csv_file_if_not_exists('raw_resultados.csv', header)
 
     last_draw = get_last_draw(url, driver)
     for draw in range(start, last_draw + 1):
         numbers, prize, date = get_draw_info(f'{url}/resultados', driver, draw)
+        num1, num2, num3, num4, num5, num6 = numbers
         day, month, year = map(lambda x: int(x), date.split(sep="/"))
-        to_csv([draw, day, month, year, prize, numbers])
+        to_csv([draw, day, month, year, prize, num1, num2, num3, num4, num5, num6])
+    driver.close()
 
-def update_results(url, driver, file='resultados.csv'):
+def update_results(url, driver, file='raw_resultados.csv'):
     last_draw = last_entry(file)
     get_results(url, driver, last_draw+1)
 
@@ -49,7 +51,7 @@ def create_csv_file_if_not_exists(file, header):
             writer.writerow(header)
 
 def to_csv(info):
-    with open("resultados.csv", 'a', newline="") as file:
+    with open("raw_resultados.csv", 'a', newline="") as file:
         writer = csv.writer(file)
         writer.writerow(info)
 
@@ -58,5 +60,5 @@ def last_entry(csv_file):
         last_line = file.readlines()[-1].split(sep=',')
     return int(last_line[0])
 
-def str_to_list_of_int(str):
-    return [int(x) for x in str.replace("[","").replace("]","").replace('\n',"").split(sep=",")]
+url, driver = set_driver()
+get_results(url, driver)
