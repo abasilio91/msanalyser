@@ -60,7 +60,3 @@ def last_entry(csv_file):
 
 def str_to_list_of_int(str):
     return [int(x) for x in str.replace("[","").replace("]","").replace('\n',"").split(sep=",")]
-
-url, driver = set_driver()
-update_results(url, driver, 'resultados.csv')
-driver.close()
