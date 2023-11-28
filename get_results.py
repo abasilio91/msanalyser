@@ -40,7 +40,7 @@ def get_results(url, driver, start=1):
 
 def update_results(url, driver, file='resultados.csv'):
     last_draw = last_entry(file)
-    get_results(url, driver, last_draw)
+    get_results(url, driver, last_draw+1)
 
 def create_csv_file_if_not_exists(file, header):
     if not os.path.exists(file):
@@ -61,7 +61,6 @@ def last_entry(csv_file):
 def str_to_list_of_int(str):
     return [int(x) for x in str.replace("[","").replace("]","").replace('\n',"").split(sep=",")]
 
-# url, driver = set_driver()
-# ultimo_resultado = last_entry('resultados.csv')
-# update_results(url, driver, ultimo_resultado)
-# driver.close()
+url, driver = set_driver()
+update_results(url, driver, 'resultados.csv')
+driver.close()
