@@ -1,12 +1,29 @@
 import pandas as pd
+import random
 
-def str_to_list_of_int(str):
-    return [int(x) for x in str.replace("[","").replace("]","").replace('\n',"").split(sep=",")]
+def create_naive_cards(num_per_card: int=6, num_cards: int=1) -> list:
+    games = []
+    past_games = get_past_games()
+    while len(games) < num_cards:
+        card = random.sample(range(1,61), num_per_card)
+        card.sort()
+        if not card_exists(card, past_games):
+            games.append(card)
+    return games
 
-def create_df(file):
-    df = pd.read_csv(file)
-    return df
+def card_exists(card, past_games):
+    if card in past_games:
+        return True
+    return False    
 
-df = create_df('raw_resultados.csv')
-string_numbers = str_to_list_of_int(df.numeros)
-print(string_numbers)
+def get_past_games():
+    df = pd.read_csv('raw_resultados.csv')
+    df['past_games'] = df.apply(lambda x: list([x['num1'],
+                                                x['num2'],
+                                                x['num3'],
+                                                x['num4'],
+                                                x['num5'],
+                                                x['num6']]), axis=1)
+    return df.past_games.to_list()
+
+print(create_naive_cards(6, 7))
